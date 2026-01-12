@@ -1,39 +1,117 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import Preloader from './components/Preloader';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
+import Home from './pages/Home';
+import About from './pages/About';
+import Careers from './pages/Careers';
+import Contact from './pages/Contact';
 
-function App() {
-  const [count, setCount] = useState(0)
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+  };
+
+  const pageTransition = {
+    type: 'tween',
+    ease: 'anticipate',
+    duration: 0.5,
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="text-center space-y-8">
-        <div className="flex justify-center gap-8">
-          <a href="https://vite.dev" target="_blank" className="transition-transform hover:scale-110">
-            <img src={viteLogo} className="h-24 w-24" alt="Vite logo" />
-          </a>
-          <a href="https://react.dev" target="_blank" className="transition-transform hover:scale-110">
-            <img src={reactLogo} className="h-24 w-24 animate-spin-slow" alt="React logo" />
-          </a>
-        </div>
-        <h1 className="text-5xl font-bold text-gray-800">Vite + React</h1>
-        <div className="bg-white rounded-lg shadow-lg p-6 space-y-4">
-          <button 
-            onClick={() => setCount((count) => count + 1)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-          >
-            count is {count}
-          </button>
-          <p className="text-gray-600">
-            Edit <code className="bg-gray-100 px-2 py-1 rounded text-sm">src/App.jsx</code> and save to test HMR
-          </p>
-        </div>
-        <p className="text-gray-500 text-sm">
-          Click on the Vite and React logos to learn more
-        </p>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route
+          path="/"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <Home />
+            </motion.div>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <About />
+            </motion.div>
+          }
+        />
+        <Route
+          path="/careers"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <Careers />
+            </motion.div>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <Contact />
+            </motion.div>
+          }
+        />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
+function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+  }, []);
+
+  return (
+    <Router>
+      <div className="App">
+        <Preloader onComplete={() => setIsLoading(false)} />
+        {!isLoading && (
+          <>
+            <ScrollToTop />
+            <Header />
+            <AnimatedRoutes />
+            <Footer />
+          </>
+        )}
       </div>
-    </div>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;
